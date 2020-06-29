@@ -1,8 +1,8 @@
 const express = require('express')
-const { response } = require('express')
 
 const app = express()
 
+// Next method allows middleware to pass execution to the next middleware
 app.use((request, response, next) => {
     console.log('Request received')
     next()
