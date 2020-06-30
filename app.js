@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 const Post = require('./models/post')
-const { response } = require('express')
+const { response, request } = require('express')
 
 const app = express()
 
@@ -56,6 +56,15 @@ app.get('/api/post/:id', (request, response, next) => {
 app.put('/api/post/:id', (request, response, next) => {
     Post.updateOne({ _id: request.params.id }, { ...request.body, _id: request.params.id })
         .then(() => response.status(200).json({ message: 'Post updated successfully!' }))
+        .catch(error => response.status(400).json({ error }))
+})
+
+/**
+ * Delete a Post object from its id
+ */
+app.delete('/api/post/:id', (request, response, next) => {
+    Post.deleteOne({ _id: request.params.id })
+        .then(() => response.status(200).json({ message: 'Post deleted' }))
         .catch(error => response.status(400).json({ error }))
 })
 
