@@ -51,6 +51,15 @@ app.get('/api/post/:id', (request, response, next) => {
 })
 
 /**
+ * Update a Post object from its id
+ */
+app.put('/api/post/:id', (request, response, next) => {
+    Post.updateOne({ _id: request.params.id }, { ...request.body, _id: request.params.id })
+        .then(() => response.status(200).json({ message: 'Post updated successfully!' }))
+        .catch(error => response.status(400).json({ error }))
+})
+
+/**
  * Retrieve all Posts from database
  */
 app.use('/api/posts', (request, response, next) => {
