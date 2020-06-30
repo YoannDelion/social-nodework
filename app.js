@@ -1,26 +1,8 @@
 const express = require('express')
+// Extract JSON Object from requests
+const bodyParser = require('body-parser')
 
 const app = express()
-
-// Next method allows middleware to pass execution to the next middleware
-// app.use((request, response, next) => {
-//     console.log('Request received')
-//     next()
-// })
-
-// app.use((request, response, next) => {
-//     response.status(201)
-//     next()
-// })
-
-// app.use((request, response, next) => {
-//     response.json({ message: 'Request well received' })
-//     next()
-// })
-
-// app.use((request, response, next) => {
-//     console.log('Response send successfully')
-// })
 
 // Handle CORS error
 app.use((request, response, next) => {
@@ -28,6 +10,16 @@ app.use((request, response, next) => {
     response.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization')
     response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
     next()
+})
+
+// Define json() function has a global middleware
+app.use(bodyParser.json())
+
+app.post('/api/posts', (request, response, next) => {
+    console.log(request.body)
+    response.status(201).json({
+        message: 'Post created!'
+    })
 })
 
 app.use('/api/posts', (request, response, next) => {
