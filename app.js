@@ -4,6 +4,8 @@ const bodyParser = require('body-parser')
 // Mongoose helps communicate with MongoDB database
 const mongoose = require('mongoose')
 
+const Post = require('./models/post')
+
 const app = express()
 
 // MongoDB connection config
@@ -27,10 +29,12 @@ app.use((request, response, next) => {
 app.use(bodyParser.json())
 
 app.post('/api/posts', (request, response, next) => {
-    console.log(request.body)
-    response.status(201).json({
-        message: 'Post created!'
+    const post = new Post({
+        ...request.body
     })
+    post.save()
+        .then(() => response.status(201).json({ message: 'Post saved!' }))
+        .catch(error => response.status(400).json({ error }))
 })
 
 app.use('/api/posts', (request, response, next) => {
