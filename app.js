@@ -28,6 +28,9 @@ app.use((request, response, next) => {
 // Define json() function has a global middleware
 app.use(bodyParser.json())
 
+/**
+ * Add new post to database
+ */
 app.post('/api/posts', (request, response, next) => {
     const post = new Post({
         ...request.body
@@ -37,22 +40,13 @@ app.post('/api/posts', (request, response, next) => {
         .catch(error => response.status(400).json({ error }))
 })
 
+/**
+ * Retrieve all posts from database
+ */
 app.use('/api/posts', (request, response, next) => {
-    const posts = [
-        {
-            _id: 'oeihfzeoi',
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa expedita blanditiis in porro delectus explicabo facere sit, perspiciatis architecto quasi temporibus nam repellat recusandae error et excepturi ullam, laborum ex.',
-            imageUrl: 'https://cdn.pixabay.com/photo/2019/06/11/18/56/camera-4267692_1280.jpg',
-            userId: 'qsomihvqios',
-        },
-        {
-            _id: 'oeihfzeomoihi',
-            content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa expedita blanditiis in porro delectus explicabo facere sit, perspiciatis architecto quasi temporibus nam repellat recusandae error et excepturi ullam, laborum ex.',
-            imageUrl: 'https://cdn.pixabay.com/photo/2019/06/11/18/56/camera-4267692_1280.jpg',
-            userId: 'qsomihvqios',
-        },
-    ]
-    response.status(200).json(posts)
+    Post.find()
+        .then(posts => response.status(200).json(posts))
+        .catch(error => response.status(400).json({ error }))
 })
 
 module.exports = app
