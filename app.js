@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 const Post = require('./models/post')
+const { response } = require('express')
 
 const app = express()
 
@@ -29,7 +30,7 @@ app.use((request, response, next) => {
 app.use(bodyParser.json())
 
 /**
- * Add new post to database
+ * Add new Post to database
  */
 app.post('/api/posts', (request, response, next) => {
     const post = new Post({
@@ -41,7 +42,16 @@ app.post('/api/posts', (request, response, next) => {
 })
 
 /**
- * Retrieve all posts from database
+ * Retrieve one Post object from its id 
+ */
+app.get('/api/post/:id', (request, response, next) => {
+    Post.findById(request.params.id)
+        .then(post => response.status(200).json(post))
+        .catch(error => response.status(404).json({ error }))
+})
+
+/**
+ * Retrieve all Posts from database
  */
 app.use('/api/posts', (request, response, next) => {
     Post.find()
