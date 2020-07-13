@@ -1,11 +1,8 @@
 const express = require('express')
-// Extract JSON Object from requests
-const bodyParser = require('body-parser')
-// Mongoose helps communicate with MongoDB database
-const mongoose = require('mongoose')
+const bodyParser = require('body-parser') // Extract JSON Object from requests
+const mongoose = require('mongoose') // Mongoose helps communicate with MongoDB database
 
-const Post = require('./models/post')
-const { response, request } = require('express')
+const postRoutes = require('./routes/post') // Retrieve post routes
 
 const app = express()
 
@@ -29,52 +26,6 @@ app.use((request, response, next) => {
 // Define json() function has a global middleware
 app.use(bodyParser.json())
 
-/**
- * Add new Post to database
- */
-app.post('/api/posts', (request, response, next) => {
-    const post = new Post({
-        ...request.body
-    })
-    post.save()
-        .then(() => response.status(201).json({ message: 'Post saved!' }))
-        .catch(error => response.status(400).json({ error }))
-})
-
-/**
- * Retrieve one Post object from its id 
- */
-app.get('/api/post/:id', (request, response, next) => {
-    Post.findById(request.params.id)
-        .then(post => response.status(200).json(post))
-        .catch(error => response.status(404).json({ error }))
-})
-
-/**
- * Update a Post object from its id
- */
-app.put('/api/post/:id', (request, response, next) => {
-    Post.updateOne({ _id: request.params.id }, { ...request.body, _id: request.params.id })
-        .then(() => response.status(200).json({ message: 'Post updated successfully!' }))
-        .catch(error => response.status(400).json({ error }))
-})
-
-/**
- * Delete a Post object from its id
- */
-app.delete('/api/post/:id', (request, response, next) => {
-    Post.deleteOne({ _id: request.params.id })
-        .then(() => response.status(200).json({ message: 'Post deleted' }))
-        .catch(error => response.status(400).json({ error }))
-})
-
-/**
- * Retrieve all Posts from database
- */
-app.use('/api/posts', (request, response, next) => {
-    Post.find()
-        .then(posts => response.status(200).json(posts))
-        .catch(error => response.status(400).json({ error }))
-})
+app.use('/api/posts', postRoutes)
 
 module.exports = app
