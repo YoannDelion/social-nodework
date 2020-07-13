@@ -3,6 +3,7 @@ const bodyParser = require('body-parser') // Extract JSON Object from requests
 const mongoose = require('mongoose') // Mongoose helps communicate with MongoDB database
 
 const postRoutes = require('./routes/post') // Retrieve post routes
+const userRoutes = require('./routes/user')
 
 const app = express()
 
@@ -27,5 +28,6 @@ app.use((request, response, next) => {
 app.use(bodyParser.json())
 
 app.use('/api/posts', postRoutes)
+app.use('/api/auth', userRoutes)
 
 module.exports = app
