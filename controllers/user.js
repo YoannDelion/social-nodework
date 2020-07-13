@@ -8,7 +8,7 @@ exports.signup = (request, response, next) => {
     bcrypt.hash(request.body.password, 10)
         .then(hash => {
             const user = new User({
-                ...request.body,
+                email: request.body.email,
                 password: hash
             })
 
@@ -22,4 +22,19 @@ exports.signup = (request, response, next) => {
 /**
  * Log a user in 
  */
-exports.login = (request, response, next) => { }
+exports.login = (request, response, next) => {
+    User.findOne({ email: request.body.email })
+        .then(user => {
+            if (!user) return response.status(401).json({ error: 'Invalid credentials!' })
+            bcrypt.compare(request.body.password, user.password)
+                .then(valid => {
+                    if (!valid) return response.status(401).json({ error: 'Invalid credentials!' })
+                    response.status(200).json({
+                        userId: user._id,
+                        token: 'TOKEN'
+                    })
+                })
+                .catch(error => response.status(500).json({ error }))
+        })
+        .catch(error => response.status(500).json({ error }))
+}
