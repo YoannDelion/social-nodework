@@ -4,7 +4,11 @@ const Post = require('../models/post')
  * Add new Post to database
  */
 exports.createPost = (request, response, next) => {
-    const post = new Post({ ...request.body })
+    const post = new Post({
+        content: request.body.content,
+        imageUrl: request.body.imageUrl,
+        userId: request.body.userId
+    })
 
     post.save()
         .then(() => response.status(201).json({ message: 'Post saved!' }))
@@ -24,7 +28,12 @@ exports.getOnePost = (request, response, next) => {
  * Update a Post object from its id
  */
 exports.updatePost = (request, response, next) => {
-    const post = new Post({ _id: request.params.id, ...request.body })
+    const post = new Post({
+        _id: request.params.id,
+        content: request.body.content,
+        imageUrl: request.body.imageUrl,
+        userId: request.body.userId
+    })
 
     Post.updateOne({ _id: request.params.id }, post)
         .then(() => response.status(200).json({ message: 'Post updated successfully!' }))
