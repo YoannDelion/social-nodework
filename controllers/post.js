@@ -30,14 +30,13 @@ exports.getOnePost = (request, response, next) => {
  * Update a Post object from its id
  */
 exports.updatePost = (request, response, next) => {
-    const post = new Post({
-        _id: request.params.id,
-        content: request.body.content,
-        imageUrl: request.body.imageUrl,
-        userId: request.body.userId
-    })
+    const postObject = request.file ?
+        {
+            ...JSON.parse(request.body.post),
+            imageUrl: `${request.protocol}://${request.get('host')}/images/${request.file.filename}`
+        } : { ...request.body }
 
-    Post.updateOne({ _id: request.params.id }, post)
+    Post.updateOne({ _id: request.params.id }, { ...postObject, _id: request.params.id })
         .then(() => response.status(200).json({ message: 'Post updated successfully!' }))
         .catch(error => response.status(400).json({ error }))
 }
