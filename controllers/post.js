@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 const Post = require('../models/post')
 
 /**
@@ -45,9 +47,16 @@ exports.updatePost = (request, response, next) => {
  * Delete a Post object from its id
  */
 exports.deletePost = (request, response, next) => {
-    Post.deleteOne({ _id: request.params.id })
-        .then(() => response.status(200).json({ message: 'Post deleted' }))
-        .catch(error => response.status(400).json({ error }))
+    Post.findById(request.params.id)
+        .then(post => {
+            const filename = post.imageUrl.split('/images/')[1]
+            fs.unlink(`images/${filename}`, () => {
+                Post.deleteOne({ _id: request.params.id })
+                    .then(() => response.status(200).json({ message: 'Post deleted' }))
+                    .catch(error => response.status(400).json({ error }))
+            })
+        })
+        .catch(error => response.status(500).json({ error }))
 }
 
 /**
