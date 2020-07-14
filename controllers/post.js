@@ -4,10 +4,12 @@ const Post = require('../models/post')
  * Add new Post to database
  */
 exports.createPost = (request, response, next) => {
+    const postObject = JSON.parse(request.body.post)
+    delete postObject._id
+
     const post = new Post({
-        content: request.body.content,
-        imageUrl: request.body.imageUrl,
-        userId: request.body.userId
+        ...postObject,
+        imageUrl: `${request.protocol}://${request.get('host')}/images/${request.file.filename}`
     })
 
     post.save()
